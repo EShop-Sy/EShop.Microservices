@@ -1,4 +1,7 @@
 # Run when commits are pushed to feature/*
+
+name: Deploy
+
 on:
   workflow_dispatch:
   push:
