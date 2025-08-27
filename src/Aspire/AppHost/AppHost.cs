@@ -7,7 +7,6 @@ var basket = builder.AddProject<Projects.Basket_API>("basket");
 
 // Reverse Proxy
 var gateway = builder.AddYarp("api-gateway-mobile")
-    .WithHostPort(5004)
     .WithConfiguration(yarp =>
     {
         var basketcluster = yarp.AddCluster(basket);
