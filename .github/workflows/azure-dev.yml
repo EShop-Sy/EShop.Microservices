@@ -1,14 +1,11 @@
-# Run when commits are pushed to feature/*
-
-name: Deploy
-
+# Run when commits are pushed to feature/basket
 on:
   workflow_dispatch:
   push:
     # Run when commits are pushed to mainline branch (main or master)
     # Set this to the mainline branch you are using
     branches:
-      - feature/*
+      - feature/basket
 
 # Set up permissions for deploying with secretless Azure federated credentials
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
@@ -24,10 +21,8 @@ jobs:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-      AZURE_API_KEY_SECRET: ${{ secrets.AZURE_API_KEY_SECRET }}
-    
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,7 +31,8 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
+          dotnet-version: | 
+            8.x.x
             9.x.x
 
       - name: Log in with Azure (Federated Credentials)
@@ -50,7 +46,11 @@ jobs:
 
       - name: Provision Infrastructure
         run: azd provision --no-prompt
+        env:
+          AZURE_API_KEY_SECRET: ${{ secrets.AZURE_API_KEY_SECRET }}
 
       - name: Deploy Application
         run: azd deploy --no-prompt
+        env:
+          AZURE_API_KEY_SECRET: ${{ secrets.AZURE_API_KEY_SECRET }}
         
